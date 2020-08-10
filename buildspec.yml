@@ -21,17 +21,23 @@ phases:
       - chmod +x ./kubectl ./aws-iam-authenticator
       - echo `kubectl version`
       - export PATH=$PWD/:$PATH
-      - python -m pip install --upgrade --force pip
-      - apt-get update && apt-get -y install jq  && pip install --upgrade awscli
+      - apt-get -y remove python3.4 python3-dev
+      - apt-get update
+      - apt-get -y install software-properties-common
+      - add-apt-repository ppa:deadsnakes/ppa      - apt-get update && apt-get -y install python3.5 python3.5-dev jq  && pip install --upgrade awscli
+      - curl https://bootstrap.pypa.io/ez_setup.py -o - | python3.5
+      - easy_install pip
+      - pip3 install --upgrade awscli
+      - ln -sf /usr/bin/python3.5 /usr/local/bin/python3
   pre_build:
     commands:
-      - python3 -m pip install --upgrade pip
-      - python3 -m pip install -r requirements.txt
-      - python3 -m pytest test_main.py
-      - TAG="$REPOSITORY_NAME.$REPOSITORY_BRANCH.$ENVIRONMENT_NAME.$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
-      - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY_URI:$TAG"'@' simple-jwt-api.yml
+      TAG="$REPOSITORY_NAME.$REPOSITORY_BRANCH.$ENVIRONMENT_NAME.$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
+      - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY_URI:$TAG"'@' simple_jwt_api.yml
       - $(aws ecr get-login --no-include-email)
       - export KUBECONFIG=$HOME/.kube/config
+      - pip3 install --upgrade pip
+      - pip3 install -r requirements.txt
+      - pytest test_main.py
   build:
     commands:
       - docker build --tag $REPOSITORY_URI:$TAG .
