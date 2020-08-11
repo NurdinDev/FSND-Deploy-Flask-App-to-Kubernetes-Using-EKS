@@ -1,5 +1,8 @@
 # Deploying a Flask API
 
+## Cluster Address
+- https://a8b0973797aa0475db88c8873b444f51-1353987088.eu-central-1.elb.amazonaws.com
+
 This is the project starter repo for the fourth course in the [Udacity Full Stack Nanodegree](https://www.udacity.com/course/full-stack-web-developer-nanodegree--nd004): Server Deployment, Containerization, and Testing.
 
 In this project you will containerize and deploy a Flask API to a Kubernetes cluster using Docker, AWS EKS, CodePipeline, and CodeBuild.
